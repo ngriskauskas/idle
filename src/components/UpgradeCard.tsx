@@ -68,7 +68,7 @@ export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
         {maxBuyable !== undefined && numberBought >= maxBuyable
           ? "Maxed"
           : !canAfford
-          ? "You're too poor lmao"
+          ? "Can't Afford"
           : "Purchase"}
       </button>
     </div>
