@@ -1,0 +1,42 @@
+# dependencies
+/node_modules
+
+# production
+/dist
+/build
+
+# local Vite dev server cache
+/.vite
+
+# test coverage
+/coverage
+
+# system files
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.*.local
+
+# editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Mac-specific files
+.AppleDouble
+.LSOverride
+
+# optional: lockfiles if you use a different package manager
+# uncomment the one(s) you don't use:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
