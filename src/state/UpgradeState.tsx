@@ -27,6 +27,7 @@ export const useUpgradeState = (
       })),
     }));
   };
+
   const updateUpgrades = (upgradeName: string) => {
     setUpgrades((prev) => ({
       ...prev,
