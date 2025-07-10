@@ -3,10 +3,12 @@ import { ResourceIcons, type Resource } from "../state/Resources";
 
 interface ResourceBarProps {
   resource: Resource;
+  toggleCollapse: () => void;
 }
 
 export function ResourceBar({
   resource: { amount, max, name, color, rate },
+  toggleCollapse,
 }: ResourceBarProps) {
   const percentFull = (amount / max) * 100;
 
@@ -20,6 +22,9 @@ export function ResourceBar({
         <span className="text-gray-300 font-mono text-sm">
           +{(rate / TickRate) * 1000}/s
         </span>
+        <div className="cursor-pointer" onClick={toggleCollapse}>
+          <span>▼</span>
+        </div>
       </div>
       <div className="relative w-full h-8 bg-gray-900 rounded-md border-2 border-gray-600 overflow-hidden">
         <div

@@ -1,11 +1,11 @@
 import "./App.css";
-import ResoucePage from "./pages/ResourcePage";
+import MainPage from "./pages/MainPage";
 import { Provider } from "./state/StateProvider";
 
 function App() {
   return (
     <Provider>
-      <ResoucePage></ResoucePage>
+      <MainPage></MainPage>
     </Provider>
   );
 }
