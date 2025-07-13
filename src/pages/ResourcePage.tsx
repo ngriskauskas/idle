@@ -11,7 +11,6 @@ export default function ResourcePage() {
   );
 
   const toggleCollapse = (key: ResourceKey) => {
-    console.log("akjsdf");
     setCollapsed((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -19,7 +18,7 @@ export default function ResourcePage() {
   };
 
   return (
-    <div>
+    <div className="h-full overflow-y-auto p-1">
       <div className="columns-2 gap-x-1 md:gap-x-2">
         {(Object.entries(resources) as [ResourceKey, Resource][]).map(
           ([key, resource]) => {
@@ -34,7 +33,7 @@ export default function ResourcePage() {
                 <ResourceBar
                   resource={resource}
                   toggleCollapse={() => toggleCollapse(key)}
-                ></ResourceBar>
+                />
                 <div
                   className={`transition-all duration-300 ease-in-out overflow-hidden ${
                     collapsed[key]

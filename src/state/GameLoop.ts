@@ -4,15 +4,18 @@ export const TickRate = 100;
 
 export const useGameLoop = ({
   updateResources,
-  recalculateAffordability,
+  calcUpgradeAfford,
+  calcFusionAfford,
 }: {
   updateResources: () => void;
-  recalculateAffordability: () => void;
+  calcUpgradeAfford: () => void;
+  calcFusionAfford: () => void;
 }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       updateResources();
-      recalculateAffordability();
+      calcUpgradeAfford();
+      calcFusionAfford();
     }, TickRate);
 
     return () => clearInterval(interval);

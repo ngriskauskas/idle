@@ -1,101 +1,93 @@
-import { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { ResourceIcons, type ResourceKey } from "../state/Resources";
+import { useEffect, useState } from "react";
 import { useGameState } from "../state/StateProvider";
 import { FusionInputArea } from "../components/FusionInputArea";
 import DragResourceIcon from "../components/DragResourceIcon";
-import {
-  TouchTransition,
-  MultiBackend,
-  Preview,
-} from "react-dnd-multi-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
+import FusionDndProvider from "../components/FusionDndProvider";
+import { ResourceIcons, type ResourceKey } from "../state/Resources";
+import type { Fusion } from "../state/Fusions";
+import FusionBar from "../components/FusionBar";
 
 export default function FusionPage() {
-  const { resources } = useGameState();
+  const { resources, fusions, doFusion } = useGameState();
   const [selectedResources, setSelectedResources] = useState<ResourceKey[]>([]);
+  const [selectedFusion, setSelectedFusion] = useState<Fusion | undefined>();
 
   const handleDrop = (type: ResourceKey) => {
-    if (selectedResources.length < 2) {
-      setSelectedResources((prev) => [...prev, type]);
-    }
+    if (selectedResources.length === 2) return;
+    setSelectedResources((prev) => [...prev, type]);
+  };
+
+  const handleRemove = (type: ResourceKey) => {
+    setSelectedResources((prev) => prev.filter((x) => x !== type));
+    setSelectedFusion(undefined);
   };
 
   const handleCombine = () => {
-    if (selectedResources.length === 2) {
-      alert(`Combining ${selectedResources[0]} + ${selectedResources[1]}!`);
-      setSelectedResources([]);
-    }
+    if (!selectedFusion) return;
+    doFusion(selectedFusion);
+    setSelectedResources([]);
   };
 
-  const HTML5toTouch = {
-    backends: [
-      {
-        backend: HTML5Backend,
-        transition: undefined,
-      },
-      {
-        backend: TouchBackend,
-        options: { enableMouseEvents: true },
-        preview: true,
-        transition: TouchTransition,
-      },
-    ],
-  };
+  useEffect(() => {
+    if (selectedResources.length < 2) setSelectedFusion(undefined);
+    else {
+      const fusion = fusions.find((f) => {
+        const inputs = f.recipe.input;
+        return (
+          inputs.includes(selectedResources[0]) &&
+          inputs.includes(selectedResources[1])
+        );
+      });
+      setSelectedFusion(fusion);
+    }
+  }, [selectedResources, fusions]);
 
   return (
-    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-      <Preview>
-        {(previewProps) => {
-          const { item, style } = previewProps;
-          const typedItem = item as { type: ResourceKey };
-          // Optional: customize look based on `item.type`
-          return (
-            <div
-              style={{
-                ...style,
-                fontSize: "2rem",
-                padding: "0.5rem",
-                backgroundColor: "rgba(55, 65, 81, 0.9)", // Tailwind gray-700ish
-                borderRadius: "0.5rem",
-                width: "3rem",
-                height: "3rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                pointerEvents: "none",
-                color: "white",
-              }}
-            >
-              {ResourceIcons[typedItem.type]}
-            </div>
-          );
-        }}
-      </Preview>
-      <div className="text-white p-6 space-y-6 max-w-4xl mx-auto">
+    <FusionDndProvider>
+      <div className="w-full max-w-4xl mx-auto px-4 py-6 text-white space-y-5">
         <FusionInputArea
           selectedResources={selectedResources}
           onDrop={handleDrop}
+          onRemove={handleRemove}
+          canAfford={selectedFusion?.canAfford}
         ></FusionInputArea>
-
+        <div className="max-w-2xl ">
+          {selectedFusion && <FusionBar fusion={selectedFusion} />}
+        </div>
         <button
           className="px-6 py-3 bg-indigo-600 rounded hover:bg-indigo-700 disabled:bg-gray-600 transition"
-          disabled={selectedResources.length !== 2}
+          disabled={
+            !selectedFusion ||
+            !selectedFusion.canAfford ||
+            selectedFusion.discovered
+          }
           onClick={handleCombine}
         >
           Combine
         </button>
-
         <div className="flex flex-wrap gap-4">
-          {Object.entries(resources).map(([key, _]) => (
+          {Object.entries(resources).map(([key, resource]) => (
             <DragResourceIcon
               key={key}
               type={key as ResourceKey}
+              resource={resource}
             ></DragResourceIcon>
           ))}
         </div>
+        <div className="w-full flex justify-center mt-8">
+          <div className="w-full max-w-3xl bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-4">
+            <h2 className="text-white text-lg font-semibold text-center">
+              All Fusions
+            </h2>
+
+            <div className="flex flex-col space-y-2 max-h-[300px] overflow-y-auto pr-2">
+              {fusions.map((fusion) => (
+                <FusionBar key={fusion.key} fusion={fusion} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-    </DndProvider>
+    </FusionDndProvider>
   );
 }

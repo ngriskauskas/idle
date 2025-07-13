@@ -1,24 +1,33 @@
 import { useDrop } from "react-dnd";
-import { ResourceIcons, type ResourceKey } from "../state/Resources";
+import { type ResourceKey } from "../state/Resources";
 import { useEffect, useRef } from "react";
+import DragResourceIcon from "./DragResourceIcon";
+import { useGameState } from "../state/StateProvider";
 
 interface FusionInputAreaProps {
   selectedResources: ResourceKey[];
   onDrop: (type: ResourceKey) => void;
+  onRemove: (type: ResourceKey) => void;
+  canAfford?: boolean;
 }
 
 export function FusionInputArea({
   selectedResources,
   onDrop,
+  onRemove,
+  canAfford,
 }: FusionInputAreaProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const { resources } = useGameState();
+
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: "RESOURCE",
       drop: (item: { type: ResourceKey }) => {
         onDrop(item.type);
       },
-      canDrop: () => selectedResources.length < 2,
+      canDrop: (item: { type: ResourceKey }) =>
+        selectedResources.length < 2 && !selectedResources.includes(item.type),
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
         canDrop: !!monitor.canDrop(),
@@ -42,18 +51,25 @@ export function FusionInputArea({
             ? "bg-indigo-800 border-indigo-500"
             : "bg-gray-800 border-gray-700"
         }
+        ${
+          canAfford === true
+            ? "outline-4 outline-green-500"
+            : canAfford === false
+            ? "outline-4 outline-red-500"
+            : ""
+        }
       `}
     >
       {selectedResources.length === 0 ? (
         <span className="text-gray-400">Drop elements here</span>
       ) : (
-        selectedResources.map((resc, idx) => (
-          <div
-            key={idx}
-            className="text-4xl p-3 bg-gray-700 rounded border border-gray-500"
-          >
-            {ResourceIcons[resc]}
-          </div>
+        selectedResources.map((resc) => (
+          <DragResourceIcon
+            key={resc}
+            type={resc}
+            onDragOut={onRemove}
+            resource={resources[resc]!}
+          />
         ))
       )}
     </div>

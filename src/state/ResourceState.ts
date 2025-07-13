@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { InitialResources, type ResourceState } from "./Resources";
-import type { UpgradeCost } from "./Upgrades";
+import {
+  InitialResources,
+  type Resource,
+  type ResourceCost,
+  type ResourceKey,
+} from "./Resources";
+import { canAfford } from "../utils/helpers";
+
+export type ResourceState = Partial<Record<ResourceKey, Resource>>;
 
 export const useResourceState = () => {
   const [resources, setResources] = useState<ResourceState>(InitialResources);
@@ -25,19 +32,16 @@ export const useResourceState = () => {
     );
   };
 
-  const spendResources = (costs: UpgradeCost[]) => {
-    const canAfford = costs.every(
-      ({ resource, amount }) => resources[resource].amount >= amount
-    );
-    if (!canAfford) return false;
+  const spendResources = (costs: ResourceCost[]) => {
+    if (!canAfford(resources, costs)) return false;
 
     setResources((prev) => {
       const updated = { ...prev };
       costs.forEach(({ resource, amount }) => {
         updated[resource] = {
           ...updated[resource],
-          amount: updated[resource].amount - amount,
-        };
+          amount: updated[resource]!.amount - amount,
+        } as Resource;
       });
       return updated;
     });

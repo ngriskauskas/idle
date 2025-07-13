@@ -1,29 +1,29 @@
 import { useState } from "react";
-import type { ResourceState } from "./Resources";
-import {
-  InitialUpgrades,
-  type Upgrade,
-  type UpgradeCost,
-  type UpgradeEffect,
-  type UpgradeState,
-} from "./Upgrades";
+import { InitialUpgrades, type Upgrade, type UpgradeEffect } from "./Upgrades";
+import type { ResourceState } from "./ResourceState";
+import type { ResourceCost } from "./Resources";
+import { canAfford } from "../utils/helpers";
+
+export type UpgradeState = {
+  available: Upgrade[];
+};
 
 export const useUpgradeState = (
   getResources: () => ResourceState,
-  spendResources: (costs: UpgradeCost[]) => boolean,
+  spendResources: (costs: ResourceCost[]) => boolean,
   setResources: React.Dispatch<React.SetStateAction<ResourceState>>
 ) => {
-  const [upgrades, setUpgrades] = useState<UpgradeState>(InitialUpgrades);
+  const [upgrades, setUpgrades] = useState<UpgradeState>({
+    available: InitialUpgrades,
+  });
 
-  const recalculateAffordability = () => {
+  const calcUpgradeAfford = () => {
     const currentResources = getResources();
     setUpgrades((prev) => ({
       ...prev,
       available: prev.available.map((x) => ({
         ...x,
-        canAfford: x.costs.every(
-          ({ resource, amount }) => currentResources[resource].amount >= amount
-        ),
+        canAfford: canAfford(currentResources, x.costs),
       })),
     }));
   };
@@ -51,7 +51,7 @@ export const useUpgradeState = (
             ...prev,
             [effect.resource]: {
               ...prev[effect.resource],
-              rate: prev[effect.resource].rate + effect.value,
+              rate: prev[effect.resource]!.rate + effect.value,
             },
           }));
           break;
@@ -60,7 +60,7 @@ export const useUpgradeState = (
             ...prev,
             [effect.resource]: {
               ...prev[effect.resource],
-              max: prev[effect.resource].max + effect.value,
+              max: prev[effect.resource]!.max + effect.value,
             },
           }));
       }
@@ -74,5 +74,5 @@ export const useUpgradeState = (
     return true;
   };
 
-  return { upgrades, recalculateAffordability, purchaseUpgrade };
+  return { upgrades, calcUpgradeAfford, purchaseUpgrade };
 };

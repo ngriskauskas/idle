@@ -7,7 +7,7 @@ interface ResourceBarProps {
 }
 
 export function ResourceBar({
-  resource: { amount, max, name, color, rate },
+  resource: { amount, max, key, color, rate },
   toggleCollapse,
 }: ResourceBarProps) {
   const percentFull = (amount / max) * 100;
@@ -16,8 +16,8 @@ export function ResourceBar({
     <div className="w-full max-w-md p-4 bg-gray-800 rounded-lg shadow-md">
       <div className="mb-2 text-white text-sm flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <span className="text-xl">{ResourceIcons[name]}</span>
-          <span className="font-semibold text-lg capitalize">{name}</span>
+          <span className="text-xl">{ResourceIcons[key]}</span>
+          <span className="font-semibold text-lg capitalize">{key}</span>
         </div>
         <span className="text-gray-300 font-mono text-sm">
           +{(rate / TickRate) * 1000}/s

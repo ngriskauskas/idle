@@ -15,8 +15,9 @@ export default function MainPage() {
     }`;
 
   return (
-    <div className="bg-blue-100 min-h-screen text-gray-100 pt-1 md:pt-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="h-screen flex flex-col bg-blue-100 text-gray-100">
+      {/* Header */}
+      <div className="max-w-5xl w-full mx-auto pt-2 md:pt-8 px-1">
         <div className="flex space-x-2 border-b border-gray-300 mx-1">
           <button
             className={tabClass("resources")}
@@ -31,10 +32,23 @@ export default function MainPage() {
             Fusions
           </button>
         </div>
+      </div>
 
-        <div className="p-1 md:p-2 bg-white border border-gray-300 rounded-b-md shadow">
-          {activeTab === "resources" && <ResourcePage />}
-          {activeTab === "fusions" && <FusionPage />}
+      {/* Scrollable white box, with bottom gap */}
+      <div className="flex-1 flex justify-center">
+        <div className="w-full max-w-5xl px-2 md:px-2">
+          <div
+            className="bg-white rounded-b-md shadow overflow-y-auto md:p-2 flex justify-center"
+            style={{
+              maxHeight:
+                window.innerWidth < 768
+                  ? "calc(100vh - 55px)" // mobile (smaller header)
+                  : "calc(100vh - 80px)", // desktop
+            }}
+          >
+            {activeTab === "resources" && <ResourcePage />}
+            {activeTab === "fusions" && <FusionPage />}
+          </div>
         </div>
       </div>
     </div>

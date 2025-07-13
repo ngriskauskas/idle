@@ -1,7 +1,16 @@
-export type ResourceKey = "fire" | "water" | "air" | "earth";
+export type ResourceKey =
+  | "fire"
+  | "water"
+  | "air"
+  | "earth"
+  | "steam"
+  | "mud"
+  | "energy"
+  | "dust"
+  | "cloud";
 
 export interface Resource {
-  name: ResourceKey;
+  key: ResourceKey;
   amount: number;
   max: number;
   color: string;
@@ -13,34 +22,39 @@ export const ResourceIcons: Record<ResourceKey, string> = {
   water: "💧",
   earth: "⛰️",
   air: "💨",
+  steam: "🌫️",
+  mud: "💩",
+  dust: "🌪️",
+  energy: "⚡",
+  cloud: "☁️",
 };
 
-export type ResourceState = Record<ResourceKey, Resource>;
+export type ResourceCost = { resource: ResourceKey; amount: number };
 
-export const InitialResources: ResourceState = {
+export const InitialResources: Partial<Record<ResourceKey, Resource>> = {
   fire: {
-    name: "fire",
+    key: "fire",
     amount: 0,
     max: 100,
     color: "#e25822",
     rate: 1,
   },
   water: {
-    name: "water",
+    key: "water",
     amount: 0,
     max: 100,
     color: "#1e90ff",
     rate: 1,
   },
   air: {
-    name: "air",
+    key: "air",
     amount: 0,
     max: 100,
     color: "#c0fefe",
     rate: 1,
   },
   earth: {
-    name: "earth",
+    key: "earth",
     amount: 0,
     max: 100,
     color: "#654321",

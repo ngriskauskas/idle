@@ -1,19 +1,25 @@
 import { createContext, useContext, type ReactNode } from "react";
-import { InitialResources, type ResourceState } from "./Resources";
-import { InitialUpgrades, type Upgrade, type UpgradeState } from "./Upgrades";
-import { useResourceState } from "./ResourceState";
-import { useUpgradeState } from "./UpgradeState";
+import { InitialResources, type ResourceKey } from "./Resources";
+import { InitialUpgrades, type Upgrade } from "./Upgrades";
+import { useResourceState, type ResourceState } from "./ResourceState";
+import { useUpgradeState, type UpgradeState } from "./UpgradeState";
 import { useGameLoop } from "./GameLoop";
+import { useFusionState, type FusionState } from "./FusionState";
+import { InitialFusionRecipes, type Fusion } from "./Fusions";
 
 interface ContextType {
   resources: ResourceState;
   upgrades: UpgradeState;
+  fusions: FusionState;
+  doFusion: (fusion: Fusion) => void;
   purchaseUpgrade: (upgrade: Upgrade) => Boolean;
 }
 
 const Context = createContext<ContextType>({
   resources: InitialResources,
-  upgrades: InitialUpgrades,
+  upgrades: { available: InitialUpgrades },
+  fusions: InitialFusionRecipes,
+  doFusion: (_) => {},
   purchaseUpgrade: (_) => false,
 });
 
@@ -25,16 +31,28 @@ export const Provider = ({ children }: { children: ReactNode }) => {
     updateResources,
     setResources,
   } = useResourceState();
-  const { upgrades, purchaseUpgrade, recalculateAffordability } =
-    useUpgradeState(getResources, spendResources, setResources);
 
-  useGameLoop({ updateResources, recalculateAffordability });
+  const { upgrades, purchaseUpgrade, calcUpgradeAfford } = useUpgradeState(
+    getResources,
+    spendResources,
+    setResources
+  );
+
+  const { fusions, calcFusionAfford, doFusion } = useFusionState(
+    getResources,
+    spendResources,
+    setResources
+  );
+
+  useGameLoop({ updateResources, calcUpgradeAfford, calcFusionAfford });
 
   return (
     <Context.Provider
       value={{
         resources,
         upgrades,
+        fusions,
+        doFusion,
         purchaseUpgrade,
       }}
     >
