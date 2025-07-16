@@ -1,37 +1,34 @@
 import { useState } from "react";
 import { InitialUpgrades, type Upgrade, type UpgradeEffect } from "./Upgrades";
-import type { ResourceState } from "./ResourceState";
-import type { ResourceCost } from "./Resources";
-import { canAfford } from "../utils/helpers";
+import { canAfford } from "../../utils/helpers";
+import type { ResourceContext } from "../resources/ResourceState";
 
-export type UpgradeState = {
-  available: Upgrade[];
-};
+export type UpgradeState = Upgrade[];
+
+export interface UpgradeContext {
+  state: UpgradeState;
+  purchase: (upgrade: Upgrade) => boolean;
+  calcAfford: () => void;
+}
 
 export const useUpgradeState = (
-  getResources: () => ResourceState,
-  spendResources: (costs: ResourceCost[]) => boolean,
-  setResources: React.Dispatch<React.SetStateAction<ResourceState>>
-) => {
-  const [upgrades, setUpgrades] = useState<UpgradeState>({
-    available: InitialUpgrades,
-  });
+  resourceContext: ResourceContext
+): UpgradeContext => {
+  const [upgrades, setUpgrades] = useState<UpgradeState>(InitialUpgrades);
 
   const calcUpgradeAfford = () => {
-    const currentResources = getResources();
-    setUpgrades((prev) => ({
-      ...prev,
-      available: prev.available.map((x) => ({
+    const currentResources = resourceContext.get();
+    setUpgrades((prev) =>
+      prev.map((x) => ({
         ...x,
         canAfford: canAfford(currentResources, x.costs),
-      })),
-    }));
+      }))
+    );
   };
 
   const updateUpgrades = (upgradeName: string) => {
-    setUpgrades((prev) => ({
-      ...prev,
-      available: prev.available.map((x) => {
+    setUpgrades((prev) =>
+      prev.map((x) => {
         if (x.name !== upgradeName) return x;
         const max = x.maxBuyable ?? Infinity;
         if (x.numberBought >= max) return x;
@@ -39,15 +36,15 @@ export const useUpgradeState = (
           ...x,
           numberBought: x.numberBought + 1,
         };
-      }),
-    }));
+      })
+    );
   };
 
   const applyEffects = (effects: UpgradeEffect[]) => {
     effects.forEach((effect) => {
       switch (effect.type) {
         case "addRate":
-          setResources((prev) => ({
+          resourceContext.set((prev) => ({
             ...prev,
             [effect.resource]: {
               ...prev[effect.resource],
@@ -56,7 +53,7 @@ export const useUpgradeState = (
           }));
           break;
         case "increaseMax":
-          setResources((prev) => ({
+          resourceContext.set((prev) => ({
             ...prev,
             [effect.resource]: {
               ...prev[effect.resource],
@@ -68,11 +65,15 @@ export const useUpgradeState = (
   };
 
   const purchaseUpgrade = (upgrade: Upgrade) => {
-    if (!spendResources(upgrade.costs)) return false;
+    if (!resourceContext.spend(upgrade.costs)) return false;
     updateUpgrades(upgrade.name);
     applyEffects(upgrade.effects);
     return true;
   };
 
-  return { upgrades, calcUpgradeAfford, purchaseUpgrade };
+  return {
+    state: upgrades,
+    calcAfford: calcUpgradeAfford,
+    purchase: purchaseUpgrade,
+  };
 };

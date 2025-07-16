@@ -1,8 +1,11 @@
 import { useState } from "react";
 import ResourcePage from "./ResourcePage";
 import FusionPage from "./FusionPage";
+import BuildingPage from "./BuildingPage";
+import TechPage from "./TechPage";
+import PrestigePage from "./PrestigePage";
 
-type Tab = "resources" | "fusions";
+type Tab = "resources" | "fusions" | "buildings" | "tech" | "prestige";
 
 export default function MainPage() {
   const [activeTab, setActiveTab] = useState<Tab>("resources");
@@ -16,7 +19,6 @@ export default function MainPage() {
 
   return (
     <div className="h-screen flex flex-col bg-blue-100 text-gray-100">
-      {/* Header */}
       <div className="max-w-5xl w-full mx-auto pt-2 md:pt-8 px-1">
         <div className="flex space-x-2 border-b border-gray-300 mx-1">
           <button
@@ -31,10 +33,27 @@ export default function MainPage() {
           >
             Fusions
           </button>
+          <button
+            className={tabClass("buildings")}
+            onClick={() => setActiveTab("buildings")}
+          >
+            Buildings
+          </button>
+          <button
+            className={tabClass("tech")}
+            onClick={() => setActiveTab("tech")}
+          >
+            Tech
+          </button>
+          <button
+            className={tabClass("prestige")}
+            onClick={() => setActiveTab("prestige")}
+          >
+            Prestige
+          </button>
         </div>
       </div>
 
-      {/* Scrollable white box, with bottom gap */}
       <div className="flex-1 flex justify-center">
         <div className="w-full max-w-5xl px-2 md:px-2">
           <div
@@ -42,12 +61,15 @@ export default function MainPage() {
             style={{
               maxHeight:
                 window.innerWidth < 768
-                  ? "calc(100vh - 55px)" // mobile (smaller header)
-                  : "calc(100vh - 80px)", // desktop
+                  ? "calc(100vh - 55px)"
+                  : "calc(100vh - 80px)",
             }}
           >
             {activeTab === "resources" && <ResourcePage />}
             {activeTab === "fusions" && <FusionPage />}
+            {activeTab === "buildings" && <BuildingPage />}
+            {activeTab === "tech" && <TechPage />}
+            {activeTab === "prestige" && <PrestigePage />}
           </div>
         </div>
       </div>

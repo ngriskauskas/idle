@@ -1,5 +1,5 @@
-import type { ResourceCost, ResourceKey } from "../state/Resources";
-import type { ResourceState } from "../state/ResourceState";
+import type { ResourceCost, ResourceKey } from "../state/resources/Resources";
+import type { ResourceState } from "../state/resources/ResourceState";
 
 export const canAfford = (
   resources: ResourceState,

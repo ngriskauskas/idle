@@ -1,11 +1,11 @@
-import { TickRate } from "../state/GameLoop";
-import { ResourceIcons } from "../state/Resources";
-import { useGameState } from "../state/StateProvider";
-import type { Upgrade, UpgradeEffect } from "../state/Upgrades";
+import { TickRate } from "../../state/GameLoop";
+import { ResourceIcons } from "../../state/resources/Resources";
+import { useGameState } from "../../state/StateProvider";
+import type { Upgrade, UpgradeEffect } from "../../state/upgrades/Upgrades";
 
 export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
   const { name, costs, maxBuyable, numberBought, canAfford, effects } = upgrade;
-  const { purchaseUpgrade } = useGameState();
+  const { upgrades } = useGameState();
 
   const generateEffectDescription = (effect: UpgradeEffect) => {
     switch (effect.type) {
@@ -52,7 +52,7 @@ export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
         ))}
       </div>
       <button
-        onClick={() => purchaseUpgrade(upgrade)}
+        onClick={() => upgrades.purchase(upgrade)}
         className={`px-3 py-2 rounded transition font-medium
     ${
       maxBuyable !== undefined && numberBought >= maxBuyable

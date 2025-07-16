@@ -2,7 +2,7 @@ import {
   ResourceIcons,
   type Resource,
   type ResourceKey,
-} from "../state/Resources";
+} from "../../state/resources/Resources";
 import { useDraggableResource } from "./useDraggableResource";
 
 interface ResourceIconProps {

@@ -1,4 +1,8 @@
-import type { Resource, ResourceCost, ResourceKey } from "./Resources";
+import type {
+  Resource,
+  ResourceCost,
+  ResourceKey,
+} from "../resources/Resources";
 
 export interface Fusion {
   key: string;

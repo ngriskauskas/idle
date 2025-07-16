@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useGameState } from "../state/StateProvider";
-import { FusionInputArea } from "../components/FusionInputArea";
-import DragResourceIcon from "../components/DragResourceIcon";
-import FusionDndProvider from "../components/FusionDndProvider";
-import { ResourceIcons, type ResourceKey } from "../state/Resources";
-import type { Fusion } from "../state/Fusions";
-import FusionBar from "../components/FusionBar";
+import { FusionInputArea } from "../components/fusion/FusionInputArea";
+import DragResourceIcon from "../components/fusion/DragResourceIcon";
+import FusionDndProvider from "../components/fusion/FusionDndProvider";
+import FusionBar from "../components/fusion/FusionBar";
+import type { ResourceKey } from "../state/resources/Resources";
+import type { Fusion } from "../state/fusions/Fusions";
 
 export default function FusionPage() {
-  const { resources, fusions, doFusion } = useGameState();
+  const { resources, fusions } = useGameState();
   const [selectedResources, setSelectedResources] = useState<ResourceKey[]>([]);
   const [selectedFusion, setSelectedFusion] = useState<Fusion | undefined>();
 
@@ -24,14 +24,14 @@ export default function FusionPage() {
 
   const handleCombine = () => {
     if (!selectedFusion) return;
-    doFusion(selectedFusion);
+    fusions.do(selectedFusion);
     setSelectedResources([]);
   };
 
   useEffect(() => {
     if (selectedResources.length < 2) setSelectedFusion(undefined);
     else {
-      const fusion = fusions.find((f) => {
+      const fusion = fusions.state.find((f) => {
         const inputs = f.recipe.input;
         return (
           inputs.includes(selectedResources[0]) &&
@@ -66,7 +66,7 @@ export default function FusionPage() {
           Combine
         </button>
         <div className="flex flex-wrap gap-4">
-          {Object.entries(resources).map(([key, resource]) => (
+          {Object.entries(resources.state).map(([key, resource]) => (
             <DragResourceIcon
               key={key}
               type={key as ResourceKey}
@@ -81,7 +81,7 @@ export default function FusionPage() {
             </h2>
 
             <div className="flex flex-col space-y-2 max-h-[300px] overflow-y-auto pr-2">
-              {fusions.map((fusion) => (
+              {fusions.state.map((fusion) => (
                 <FusionBar key={fusion.key} fusion={fusion} />
               ))}
             </div>

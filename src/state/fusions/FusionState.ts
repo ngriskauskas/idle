@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { InitialFusionRecipes, type Fusion } from "./Fusions";
-import type { ResourceState } from "./ResourceState";
-import { canAfford } from "../utils/helpers";
-import type { ResourceCost, ResourceKey } from "./Resources";
+import { canAfford } from "../../utils/helpers";
+import type { ResourceContext } from "../resources/ResourceState";
 
 export type FusionState = Fusion[];
+
+export interface FusionContext {
+  state: FusionState;
+  calcAfford: () => void;
+  do: (fusion: Fusion) => void;
+}
+
 export const useFusionState = (
-  getResources: () => ResourceState,
-  spendResources: (costs: ResourceCost[]) => boolean,
-  setResources: React.Dispatch<React.SetStateAction<ResourceState>>
-) => {
+  resourceContext: ResourceContext
+): FusionContext => {
   const [fusions, setFusions] = useState<FusionState>(InitialFusionRecipes);
 
   const calcFusionAfford = () => {
-    const currentResources = getResources();
+    const currentResources = resourceContext.get();
     setFusions((prev) =>
       prev.map((fusion) => ({
         ...fusion,
@@ -23,17 +27,17 @@ export const useFusionState = (
   };
 
   const doFusion = (fusion: Fusion) => {
-    const currentResources = getResources();
+    const currentResources = resourceContext.get();
     if (!canAfford(currentResources, fusion.recipe.costs)) return;
-    spendResources(fusion.recipe.costs);
+    resourceContext.spend(fusion.recipe.costs);
     setFusions((prev) =>
       prev.map((f) => (f.key === fusion.key ? { ...f, discovered: true } : f))
     );
-    setResources((prev) => ({
+    resourceContext.set((prev) => ({
       ...prev,
       [fusion.recipe.output.key]: fusion.recipe.output,
     }));
   };
 
-  return { fusions, calcFusionAfford, doFusion };
+  return { state: fusions, calcAfford: calcFusionAfford, do: doFusion };
 };

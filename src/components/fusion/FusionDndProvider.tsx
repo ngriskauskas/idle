@@ -1,12 +1,15 @@
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ResourceIcons, type ResourceKey } from "../state/Resources";
 import {
   TouchTransition,
   MultiBackend,
   Preview,
 } from "react-dnd-multi-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
+import {
+  ResourceIcons,
+  type ResourceKey,
+} from "../../state/resources/Resources";
 
 const HTML5toTouch = {
   backends: [

@@ -1,63 +1,45 @@
 import { createContext, useContext, type ReactNode } from "react";
-import { InitialResources, type ResourceKey } from "./Resources";
-import { InitialUpgrades, type Upgrade } from "./Upgrades";
-import { useResourceState, type ResourceState } from "./ResourceState";
-import { useUpgradeState, type UpgradeState } from "./UpgradeState";
+import { useUpgradeState, type UpgradeContext } from "./upgrades/UpgradeState";
 import { useGameLoop } from "./GameLoop";
-import { useFusionState, type FusionState } from "./FusionState";
-import { InitialFusionRecipes, type Fusion } from "./Fusions";
+import { useFusionState, type FusionContext } from "./fusions/FusionState";
+import {
+  useResourceState,
+  type ResourceContext,
+} from "./resources/ResourceState";
 
 interface ContextType {
-  resources: ResourceState;
-  upgrades: UpgradeState;
-  fusions: FusionState;
-  doFusion: (fusion: Fusion) => void;
-  purchaseUpgrade: (upgrade: Upgrade) => Boolean;
+  resources: ResourceContext;
+  upgrades: UpgradeContext;
+  fusions: FusionContext;
 }
 
-const Context = createContext<ContextType>({
-  resources: InitialResources,
-  upgrades: { available: InitialUpgrades },
-  fusions: InitialFusionRecipes,
-  doFusion: (_) => {},
-  purchaseUpgrade: (_) => false,
-});
+const Context = createContext<ContextType | undefined>(undefined);
 
 export const Provider = ({ children }: { children: ReactNode }) => {
-  const {
-    resources,
-    getResources,
-    spendResources,
-    updateResources,
-    setResources,
-  } = useResourceState();
+  const resourceContext = useResourceState();
+  const upgradeContext = useUpgradeState(resourceContext);
+  const fusionContext = useFusionState(resourceContext);
 
-  const { upgrades, purchaseUpgrade, calcUpgradeAfford } = useUpgradeState(
-    getResources,
-    spendResources,
-    setResources
-  );
-
-  const { fusions, calcFusionAfford, doFusion } = useFusionState(
-    getResources,
-    spendResources,
-    setResources
-  );
-
-  useGameLoop({ updateResources, calcUpgradeAfford, calcFusionAfford });
+  useGameLoop([
+    resourceContext.update,
+    upgradeContext.calcAfford,
+    fusionContext.calcAfford,
+  ]);
 
   return (
     <Context.Provider
       value={{
-        resources,
-        upgrades,
-        fusions,
-        doFusion,
-        purchaseUpgrade,
+        resources: resourceContext,
+        upgrades: upgradeContext,
+        fusions: fusionContext,
       }}
     >
       {children}
     </Context.Provider>
   );
 };
-export const useGameState = () => useContext(Context);
+export const useGameState = () => {
+  const ctx = useContext(Context);
+  if (!ctx) throw new Error("useGameState must be used within a <Provider>");
+  return ctx;
+};

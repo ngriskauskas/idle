@@ -1,5 +1,5 @@
-import { TickRate } from "../state/GameLoop";
-import { ResourceIcons, type Resource } from "../state/Resources";
+import { TickRate } from "../../state/GameLoop";
+import { ResourceIcons, type Resource } from "../../state/resources/Resources";
 
 interface ResourceBarProps {
   resource: Resource;

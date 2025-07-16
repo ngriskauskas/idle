@@ -2,20 +2,10 @@ import { useEffect } from "react";
 
 export const TickRate = 100;
 
-export const useGameLoop = ({
-  updateResources,
-  calcUpgradeAfford,
-  calcFusionAfford,
-}: {
-  updateResources: () => void;
-  calcUpgradeAfford: () => void;
-  calcFusionAfford: () => void;
-}) => {
+export const useGameLoop = (tickFns: Array<() => void>) => {
   useEffect(() => {
     const interval = setInterval(() => {
-      updateResources();
-      calcUpgradeAfford();
-      calcFusionAfford();
+      for (const fn of tickFns) fn();
     }, TickRate);
 
     return () => clearInterval(interval);

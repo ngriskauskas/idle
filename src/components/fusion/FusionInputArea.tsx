@@ -1,8 +1,8 @@
 import { useDrop } from "react-dnd";
-import { type ResourceKey } from "../state/Resources";
 import { useEffect, useRef } from "react";
 import DragResourceIcon from "./DragResourceIcon";
-import { useGameState } from "../state/StateProvider";
+import { useGameState } from "../../state/StateProvider";
+import type { ResourceKey } from "../../state/resources/Resources";
 
 interface FusionInputAreaProps {
   selectedResources: ResourceKey[];
@@ -68,7 +68,7 @@ export function FusionInputArea({
             key={resc}
             type={resc}
             onDragOut={onRemove}
-            resource={resources[resc]!}
+            resource={resources.state[resc]!}
           />
         ))
       )}

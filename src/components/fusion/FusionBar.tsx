@@ -1,5 +1,8 @@
-import type { Fusion } from "../state/Fusions";
-import { ResourceIcons, type ResourceKey } from "../state/Resources";
+import type { Fusion } from "../../state/fusions/Fusions";
+import {
+  ResourceIcons,
+  type ResourceKey,
+} from "../../state/resources/Resources";
 
 export default function FusionBar({ fusion }: { fusion: Fusion }) {
   return (

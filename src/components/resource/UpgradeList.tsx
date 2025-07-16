@@ -1,4 +1,4 @@
-import type { Upgrade } from "../state/Upgrades";
+import type { Upgrade } from "../../state/upgrades/Upgrades";
 import { UpgradeCard } from "./UpgradeCard";
 
 export function UpgradeList({ upgrades }: { upgrades: Upgrade[] }) {

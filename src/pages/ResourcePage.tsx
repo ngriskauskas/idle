@@ -1,13 +1,15 @@
-import { useState } from "react";
-import { ResourceBar } from "../components/ResourceBar";
-import { UpgradeList } from "../components/UpgradeList";
-import { type Resource, type ResourceKey } from "../state/Resources";
+import { useEffect, useState } from "react";
+import { ResourceBar } from "../components/resource/ResourceBar";
+import { UpgradeList } from "../components/resource/UpgradeList";
 import { useGameState } from "../state/StateProvider";
+import type { Resource, ResourceKey } from "../state/resources/Resources";
 
 export default function ResourcePage() {
   const { resources, upgrades } = useGameState();
   const [collapsed, setCollapsed] = useState<Record<ResourceKey, boolean>>(
-    {} as Record<ResourceKey, boolean>
+    Object.fromEntries(
+      Object.keys(resources).map((key) => [key, true])
+    ) as Record<ResourceKey, boolean>
   );
 
   const toggleCollapse = (key: ResourceKey) => {
@@ -20,9 +22,9 @@ export default function ResourcePage() {
   return (
     <div className="h-full overflow-y-auto p-1">
       <div className="columns-2 gap-x-1 md:gap-x-2">
-        {(Object.entries(resources) as [ResourceKey, Resource][]).map(
+        {(Object.entries(resources.state) as [ResourceKey, Resource][]).map(
           ([key, resource]) => {
-            const availableUpgrades = upgrades.available.filter(
+            const availableUpgrades = upgrades.state.filter(
               (x) => x.resource === key
             );
             return (

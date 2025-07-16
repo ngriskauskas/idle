@@ -5,11 +5,18 @@ import {
   type ResourceCost,
   type ResourceKey,
 } from "./Resources";
-import { canAfford } from "../utils/helpers";
+import { canAfford } from "../../utils/helpers";
 
 export type ResourceState = Partial<Record<ResourceKey, Resource>>;
+export interface ResourceContext {
+  state: ResourceState;
+  update: () => void;
+  spend: (costs: ResourceCost[]) => boolean;
+  set: React.Dispatch<React.SetStateAction<ResourceState>>;
+  get: () => ResourceState;
+}
 
-export const useResourceState = () => {
+export const useResourceState = (): ResourceContext => {
   const [resources, setResources] = useState<ResourceState>(InitialResources);
   const resourcesRef = useRef(resources);
 
@@ -51,10 +58,10 @@ export const useResourceState = () => {
   const getResources = () => resourcesRef.current;
 
   return {
-    resources,
-    updateResources,
-    getResources,
-    spendResources,
-    setResources,
+    state: resources,
+    update: updateResources,
+    get: getResources,
+    spend: spendResources,
+    set: setResources,
   };
 };

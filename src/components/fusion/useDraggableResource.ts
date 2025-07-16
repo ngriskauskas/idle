@@ -1,6 +1,6 @@
 import { useDrag } from "react-dnd";
-import type { ResourceKey } from "../state/Resources";
 import { useEffect, useRef } from "react";
+import type { ResourceKey } from "../../state/resources/Resources";
 
 export function useDraggableResource(
   type: ResourceKey,

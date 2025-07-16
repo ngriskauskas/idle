@@ -1,4 +1,4 @@
-import type { ResourceCost, ResourceKey } from "./Resources";
+import type { ResourceCost, ResourceKey } from "../resources/Resources";
 
 export interface Upgrade {
   name: string;
@@ -21,7 +21,6 @@ export type UpgradeEffect = {
 };
 
 export const InitialUpgrades: Upgrade[] = [
-  // 🔥 Fire Upgrades
   {
     name: "Blazing Furnace",
     resource: "fire",
