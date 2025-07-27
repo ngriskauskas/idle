@@ -3,6 +3,7 @@ import {
   ResourceIcons,
   type ResourceKey,
 } from "../../state/resources/Resources";
+import { ResourceCostDisplay } from "../resource/ResourceCostDisplay";
 
 export default function FusionBar({ fusion }: { fusion: Fusion }) {
   return (
@@ -24,20 +25,10 @@ export default function FusionBar({ fusion }: { fusion: Fusion }) {
         </div>
       )}
 
-      <div className="flex items-center flex-wrap gap-2 text-gray-300">
+      <div className="flex items-center flex-wrap gap-2 text-gray-300 bg-slate-700 px-4 py-1 rounded">
         <span className="font-medium whitespace-nowrap">Costs:</span>
         {fusion.recipe.costs.map((cost) => (
-          <span
-            key={cost.resource}
-            className="inline-flex items-center px-2 py-1 bg-gray-700 rounded"
-          >
-            <span className="mr-1 text-lg">
-              {ResourceIcons[cost.resource as ResourceKey]}
-            </span>
-            <span>
-              {cost.amount} {cost.resource}
-            </span>
-          </span>
+          <ResourceCostDisplay key={cost.resource} cost={cost} />
         ))}
       </div>
 

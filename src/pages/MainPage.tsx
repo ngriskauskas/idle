@@ -1,13 +1,15 @@
 import { useState } from "react";
-import ResourcePage from "./ResourcePage";
-import FusionPage from "./FusionPage";
+import { useGameLoop } from "../state/GameLoop";
 import BuildingPage from "./BuildingPage";
-import TechPage from "./TechPage";
+import FusionPage from "./FusionPage";
 import PrestigePage from "./PrestigePage";
+import ResourcePage from "./ResourcePage";
+import TechPage from "./TechPage";
 
 type Tab = "resources" | "fusions" | "buildings" | "tech" | "prestige";
 
 export default function MainPage() {
+  useGameLoop();
   const [activeTab, setActiveTab] = useState<Tab>("resources");
 
   const tabClass = (tab: Tab) =>

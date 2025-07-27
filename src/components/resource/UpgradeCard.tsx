@@ -1,24 +1,12 @@
-import { TickRate } from "../../state/GameLoop";
-import { ResourceIcons } from "../../state/resources/Resources";
-import { useGameState } from "../../state/StateProvider";
-import type { Upgrade, UpgradeEffect } from "../../state/upgrades/Upgrades";
+import { useGameState } from "../../state/GameState";
+import type { Upgrade } from "../../state/upgrades/Upgrades";
+import { EffectDisplay } from "../EffectDisplay";
+import { PurchaseButton } from "../PurchaseButton";
+import { ResourceCostDisplay } from "./ResourceCostDisplay";
 
 export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
   const { name, costs, maxBuyable, numberBought, canAfford, effects } = upgrade;
-  const { upgrades } = useGameState();
-
-  const generateEffectDescription = (effect: UpgradeEffect) => {
-    switch (effect.type) {
-      case "addRate":
-        return `+${(effect.value / TickRate) * 1000}  ${
-          ResourceIcons[effect.resource]
-        } ${effect.resource} / sec`;
-      case "increaseMax":
-        return `+${effect.value} ${ResourceIcons[effect.resource]} ${
-          effect.resource
-        } max`;
-    }
-  };
+  const purchase = useGameState((s) => s.upgrades.purchase);
 
   return (
     <div className="bg-gray-700 p-4 rounded-lg shadow-inner space-y-2">
@@ -30,47 +18,23 @@ export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
       </div>
       <div className="text-sm text-white my-3">
         <ul className="flex gap-4 flex-wrap capitalize">
-          {costs.map(({ resource, amount }) => (
-            <li
-              key={resource}
-              className="flex items-center space-x-2 bg-gray-800 rounded px-2 py-1"
-            >
-              <span className="text-xl">{ResourceIcons[resource]}</span>
-              <span className="">{resource}</span>
-              <span className="ml-1 bg-yellow-400 text-black rounded px-2 py-0.5 font-semibold">
-                {amount}
-              </span>
-            </li>
+          {costs.map((cost) => (
+            <div className="bg-gray-800 rounded">
+              <ResourceCostDisplay key={cost.resource} cost={cost} />
+            </div>
           ))}
         </ul>
       </div>
-      <div className="text-white capitalize bg-slate-800 p-2 px-3 my-3 rounded-md space-y-1 w-fit">
+      <div className="text-white capitalize bg-slate-800 p-2 px-3 my-3 rounded space-y-1 w-fit">
         {effects.map((effect, i) => (
-          <div key={i} className="text-sm text-slate-200">
-            {effect.description ?? generateEffectDescription(effect)}{" "}
-          </div>
+          <EffectDisplay key={i} effect={effect} />
         ))}
       </div>
-      <button
-        onClick={() => upgrades.purchase(upgrade)}
-        className={`px-3 py-2 rounded transition font-medium
-    ${
-      maxBuyable !== undefined && numberBought >= maxBuyable
-        ? "bg-yellow-400 hover:bg-yellow-500"
-        : !canAfford
-        ? "bg-gray-400"
-        : "bg-blue-300 hover:bg-blue-400"
-    }`}
-        disabled={
-          !canAfford || (maxBuyable !== undefined && numberBought >= maxBuyable)
-        }
-      >
-        {maxBuyable !== undefined && numberBought >= maxBuyable
-          ? "Maxed"
-          : !canAfford
-          ? "Can't Afford"
-          : "Purchase"}
-      </button>
+      <PurchaseButton
+        onClick={() => purchase(upgrade)}
+        canAfford={canAfford}
+        canBuy={maxBuyable === undefined || numberBought < maxBuyable}
+      />
     </div>
   );
 }

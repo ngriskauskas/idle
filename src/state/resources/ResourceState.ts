@@ -1,67 +1,61 @@
-import { useEffect, useRef, useState } from "react";
+import type { StateCreator } from "zustand";
+import type { GameState } from "../../state/GameState";
 import {
   InitialResources,
   type Resource,
   type ResourceCost,
   type ResourceKey,
-} from "./Resources";
+} from "../../state/resources/Resources";
 import { canAfford } from "../../utils/helpers";
 
-export type ResourceState = Partial<Record<ResourceKey, Resource>>;
-export interface ResourceContext {
-  state: ResourceState;
-  update: () => void;
-  spend: (costs: ResourceCost[]) => boolean;
-  set: React.Dispatch<React.SetStateAction<ResourceState>>;
-  get: () => ResourceState;
-}
+export type Resources = Partial<Record<ResourceKey, Resource>>;
 
-export const useResourceState = (): ResourceContext => {
-  const [resources, setResources] = useState<ResourceState>(InitialResources);
-  const resourcesRef = useRef(resources);
-
-  useEffect(() => {
-    resourcesRef.current = resources;
-  }, [resources]);
-
-  const updateResources = () => {
-    setResources(
-      (prev) =>
-        Object.fromEntries(
-          Object.entries(prev).map(([key, resc]) => [
-            key,
-            {
-              ...resc,
-              amount: Math.min(resc.amount + resc.rate, resc.max),
-            },
-          ])
-        ) as ResourceState
-    );
-  };
-
-  const spendResources = (costs: ResourceCost[]) => {
-    if (!canAfford(resources, costs)) return false;
-
-    setResources((prev) => {
-      const updated = { ...prev };
-      costs.forEach(({ resource, amount }) => {
-        updated[resource] = {
-          ...updated[resource],
-          amount: updated[resource]!.amount - amount,
-        } as Resource;
-      });
-      return updated;
-    });
-    return true;
-  };
-
-  const getResources = () => resourcesRef.current;
-
-  return {
-    state: resources,
-    update: updateResources,
-    get: getResources,
-    spend: spendResources,
-    set: setResources,
+export type ResourceState = {
+  resources: {
+    state: Resources;
+    update: () => void;
+    spend: (costs: ResourceCost[]) => void;
   };
 };
+
+export const createResourceState: StateCreator<
+  GameState,
+  [],
+  [],
+  ResourceState
+> = (set) => ({
+  resources: {
+    state: InitialResources,
+    update: () =>
+      set((state) => ({
+        resources: {
+          ...state.resources,
+          state: Object.fromEntries(
+            Object.entries(state.resources.state).map(([key, resc]) => [
+              key,
+              {
+                ...resc,
+                amount: Math.min(resc.amount + resc.rate, resc.max),
+              },
+            ])
+          ) as Resources,
+        },
+      })),
+    spend: (costs) =>
+      set((state) => {
+        if (!canAfford(state.resources.state, costs)) return state;
+
+        const updatedResources = { ...state.resources.state };
+        costs.forEach(({ resource, amount }) => {
+          updatedResources[resource]!.amount -= amount;
+        });
+
+        return {
+          resources: {
+            ...state.resources,
+            state: updatedResources,
+          },
+        };
+      }),
+  },
+});

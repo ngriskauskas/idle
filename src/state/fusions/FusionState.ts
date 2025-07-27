@@ -1,43 +1,50 @@
-import { useState } from "react";
-import { InitialFusionRecipes, type Fusion } from "./Fusions";
+import type { StateCreator } from "zustand";
+import { InitialFusionRecipes, type Fusion } from "../../state/fusions/Fusions";
+import type { GameState } from "../../state/GameState";
 import { canAfford } from "../../utils/helpers";
-import type { ResourceContext } from "../resources/ResourceState";
 
-export type FusionState = Fusion[];
-
-export interface FusionContext {
-  state: FusionState;
-  calcAfford: () => void;
-  do: (fusion: Fusion) => void;
-}
-
-export const useFusionState = (
-  resourceContext: ResourceContext
-): FusionContext => {
-  const [fusions, setFusions] = useState<FusionState>(InitialFusionRecipes);
-
-  const calcFusionAfford = () => {
-    const currentResources = resourceContext.get();
-    setFusions((prev) =>
-      prev.map((fusion) => ({
-        ...fusion,
-        canAfford: canAfford(currentResources, fusion.recipe.costs),
-      }))
-    );
+export type FusionState = {
+  fusions: {
+    state: Fusion[];
+    do: (fusion: Fusion) => void;
+    calcAfford: () => void;
   };
-
-  const doFusion = (fusion: Fusion) => {
-    const currentResources = resourceContext.get();
-    if (!canAfford(currentResources, fusion.recipe.costs)) return;
-    resourceContext.spend(fusion.recipe.costs);
-    setFusions((prev) =>
-      prev.map((f) => (f.key === fusion.key ? { ...f, discovered: true } : f))
-    );
-    resourceContext.set((prev) => ({
-      ...prev,
-      [fusion.recipe.output.key]: fusion.recipe.output,
-    }));
-  };
-
-  return { state: fusions, calcAfford: calcFusionAfford, do: doFusion };
 };
+
+export const createFusionState: StateCreator<GameState, [], [], FusionState> = (
+  set
+) => ({
+  fusions: {
+    state: InitialFusionRecipes,
+    do: (fusion) =>
+      set((s) => {
+        s.resources.spend(fusion.recipe.costs);
+        return {
+          fusions: {
+            ...s.fusions,
+            state: s.fusions.state.map((f) =>
+              f.key === fusion.key ? { ...f, discovered: true } : f
+            ),
+          },
+          resources: {
+            ...s.resources,
+            state: {
+              ...s.resources.state,
+              [fusion.recipe.output.key]: fusion.recipe.output,
+            },
+          },
+        };
+      }),
+    calcAfford: () => {
+      set((s) => ({
+        fusions: {
+          ...s.fusions,
+          state: s.fusions.state.map((fusion) => ({
+            ...fusion,
+            canAfford: canAfford(s.resources.state, fusion.recipe.costs),
+          })),
+        },
+      }));
+    },
+  },
+});

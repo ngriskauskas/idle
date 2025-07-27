@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ResourceBar } from "../components/resource/ResourceBar";
 import { UpgradeList } from "../components/resource/UpgradeList";
-import { useGameState } from "../state/StateProvider";
+import { useGameState } from "../state/GameState";
 import type { Resource, ResourceKey } from "../state/resources/Resources";
 
 export default function ResourcePage() {

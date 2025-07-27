@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useGameState } from "../state/StateProvider";
-import { FusionInputArea } from "../components/fusion/FusionInputArea";
 import DragResourceIcon from "../components/fusion/DragResourceIcon";
-import FusionDndProvider from "../components/fusion/FusionDndProvider";
 import FusionBar from "../components/fusion/FusionBar";
-import type { ResourceKey } from "../state/resources/Resources";
+import FusionDndProvider from "../components/fusion/FusionDndProvider";
+import { FusionInputArea } from "../components/fusion/FusionInputArea";
 import type { Fusion } from "../state/fusions/Fusions";
+import { useGameState } from "../state/GameState";
+import type { ResourceKey } from "../state/resources/Resources";
 
 export default function FusionPage() {
   const { resources, fusions } = useGameState();
