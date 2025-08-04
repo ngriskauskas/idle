@@ -42,17 +42,17 @@ export const createResourceState: StateCreator<
         },
       })),
     spend: (costs) =>
-      set((state) => {
-        if (!canAfford(state.resources.state, costs)) return state;
+      set((s) => {
+        if (!canAfford(s.resources.state, costs)) return s;
 
-        const updatedResources = { ...state.resources.state };
+        const updatedResources = { ...s.resources.state };
         costs.forEach(({ resource, amount }) => {
           updatedResources[resource]!.amount -= amount;
         });
 
         return {
           resources: {
-            ...state.resources,
+            ...s.resources,
             state: updatedResources,
           },
         };

@@ -1,12 +1,8 @@
-import type { ResourceCost, ResourceKey } from "../resources/Resources";
+import type { Purchasable } from "../Purchasable";
+import type { ResourceKey } from "../resources/Resources";
 
-export interface Upgrade {
-  name: string;
+export interface Upgrade extends Purchasable {
   resource: ResourceKey;
-  costs: ResourceCost[];
-  numberBought: number;
-  maxBuyable?: number;
-  canAfford: boolean;
   effects: UpgradeEffect[];
 }
 
@@ -22,14 +18,15 @@ export type UpgradeEffect = {
 
 export const InitialUpgrades: Upgrade[] = [
   {
-    name: "Blazing Furnace",
+    key: "Blazing Furnace",
     resource: "fire",
     costs: [
       { resource: "fire", amount: 100 },
       { resource: "earth", amount: 20 },
     ],
-    numberBought: 0,
-    maxBuyable: 3,
+    owned: 0,
+    max: 3,
+    bought: false,
     canAfford: false,
     effects: [
       {
@@ -40,15 +37,17 @@ export const InitialUpgrades: Upgrade[] = [
     ],
   },
   {
-    name: "Flame Jet",
+    key: "Flame Jet",
     resource: "fire",
     costs: [
       { resource: "fire", amount: 80 },
       { resource: "air", amount: 10 },
     ],
-    numberBought: 0,
-    maxBuyable: 5,
+    owned: 0,
+    max: 5,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "addRate",
@@ -58,15 +57,17 @@ export const InitialUpgrades: Upgrade[] = [
     ],
   },
   {
-    name: "Inferno Reactor",
+    key: "Inferno Reactor",
     resource: "fire",
     costs: [
       { resource: "fire", amount: 200 },
       { resource: "earth", amount: 50 },
       { resource: "water", amount: 25 },
     ],
-    numberBought: 0,
+    owned: 0,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "addRate",
@@ -83,15 +84,17 @@ export const InitialUpgrades: Upgrade[] = [
 
   // 💧 Water Upgrades
   {
-    name: "Hydro Pump",
+    key: "Hydro Pump",
     resource: "water",
     costs: [
       { resource: "water", amount: 120 },
       { resource: "air", amount: 10 },
     ],
-    numberBought: 0,
-    maxBuyable: 2,
+    owned: 0,
+    max: 2,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "addRate",
@@ -101,14 +104,16 @@ export const InitialUpgrades: Upgrade[] = [
     ],
   },
   {
-    name: "Aqua Shield",
+    key: "Aqua Shield",
     resource: "water",
     costs: [
       { resource: "water", amount: 150 },
       { resource: "earth", amount: 30 },
     ],
-    numberBought: 0,
+    owned: 0,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "increaseMax",
@@ -120,15 +125,17 @@ export const InitialUpgrades: Upgrade[] = [
 
   // 🌍 Earth Upgrades
   {
-    name: "Earth Core Drill",
+    key: "Earth Core Drill",
     resource: "earth",
     costs: [
       { resource: "earth", amount: 150 },
       { resource: "fire", amount: 30 },
     ],
-    numberBought: 0,
-    maxBuyable: 4,
+    owned: 0,
+    max: 4,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "addRate",
@@ -138,11 +145,13 @@ export const InitialUpgrades: Upgrade[] = [
     ],
   },
   {
-    name: "Stone Compactor",
+    key: "Stone Compactor",
     resource: "earth",
     costs: [{ resource: "earth", amount: 100 }],
-    numberBought: 0,
+    owned: 0,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "increaseMax",
@@ -152,15 +161,17 @@ export const InitialUpgrades: Upgrade[] = [
     ],
   },
   {
-    name: "Seismic Stabilizer",
+    key: "Seismic Stabilizer",
     resource: "earth",
     costs: [
       { resource: "earth", amount: 180 },
       { resource: "air", amount: 30 },
     ],
-    numberBought: 0,
-    maxBuyable: 1,
+    owned: 0,
+    max: 1,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "addRate",
@@ -177,15 +188,17 @@ export const InitialUpgrades: Upgrade[] = [
 
   // 🌬️ Air Upgrades
   {
-    name: "Wind Turbine",
+    key: "Wind Turbine",
     resource: "air",
     costs: [
       { resource: "air", amount: 90 },
       { resource: "water", amount: 25 },
     ],
-    numberBought: 0,
-    maxBuyable: 3,
+    owned: 0,
+    max: 3,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "addRate",
@@ -195,14 +208,16 @@ export const InitialUpgrades: Upgrade[] = [
     ],
   },
   {
-    name: "Sky Blaster",
+    key: "Sky Blaster",
     resource: "air",
     costs: [
       { resource: "air", amount: 110 },
       { resource: "fire", amount: 20 },
     ],
-    numberBought: 0,
+    owned: 0,
     canAfford: false,
+    bought: false,
+
     effects: [
       {
         type: "increaseMax",

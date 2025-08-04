@@ -1,13 +1,7 @@
-import type { ResourceCost } from "../resources/Resources";
-import type { ResourceContext } from "../resources/ResourceState";
+import type { Purchasable } from "../Purchasable";
 
-export interface Building {
-  key: string;
+export interface Building extends Purchasable {
   description: string;
-  costs: ResourceCost[];
-  owned: number;
-  canAfford: boolean;
-  effect: (ctx: { resources: ResourceContext }) => void;
 }
 
 export const InitialBuildings: Building[] = [
@@ -19,16 +13,25 @@ export const InitialBuildings: Building[] = [
       { resource: "water", amount: 100 },
     ],
     owned: 0,
+    bought: false,
     canAfford: false,
-    effect: ({ resources }) => {},
+    effect: (set) => {
+      setTimeout(() => {
+        set((s) => {
+          s.resources.spend([{ resource: "water", amount: 50 }]);
+          return s;
+        });
+      }, 5000);
+    },
   },
   {
     key: "mine",
     description: "Produces minerals",
     costs: [{ resource: "mud", amount: 200 }],
     owned: 0,
+    bought: false,
     canAfford: false,
-    effect: ({ resources }) => {},
+    effect: () => {},
   },
   {
     key: "factory",
@@ -36,7 +39,8 @@ export const InitialBuildings: Building[] = [
     costs: [{ resource: "steam", amount: 300 }],
     owned: 0,
     canAfford: false,
-    effect: ({ resources }) => {},
+    bought: false,
+    effect: () => {},
   },
   {
     key: "powerPlant",
@@ -44,7 +48,8 @@ export const InitialBuildings: Building[] = [
     costs: [{ resource: "energy", amount: 400 }],
     owned: 0,
     canAfford: false,
-    effect: ({ resources }) => {},
+    bought: false,
+    effect: () => {},
   },
   {
     key: "researchLab",
@@ -52,7 +57,8 @@ export const InitialBuildings: Building[] = [
     costs: [{ resource: "energy", amount: 500 }],
     owned: 0,
     canAfford: false,
-    effect: ({ resources }) => {},
+    bought: false,
+    effect: () => {},
   },
   {
     key: "spaceport",
@@ -63,7 +69,8 @@ export const InitialBuildings: Building[] = [
     ],
     owned: 0,
     canAfford: false,
-    effect: ({ resources }) => {},
+    bought: false,
+    effect: () => {},
   },
   {
     key: "roboticsFactory",
@@ -74,6 +81,7 @@ export const InitialBuildings: Building[] = [
     ],
     owned: 0,
     canAfford: false,
-    effect: ({ resources }) => {},
+    bought: false,
+    effect: () => {},
   },
 ];

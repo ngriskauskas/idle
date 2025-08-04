@@ -5,22 +5,22 @@ import { PurchaseButton } from "../PurchaseButton";
 import { ResourceCostDisplay } from "./ResourceCostDisplay";
 
 export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
-  const { name, costs, maxBuyable, numberBought, canAfford, effects } = upgrade;
+  const { key, costs, max, owned, canAfford, effects } = upgrade;
   const purchase = useGameState((s) => s.upgrades.purchase);
 
   return (
     <div className="bg-gray-700 p-4 rounded-lg shadow-inner space-y-2">
       <div className="flex justify-between items-center">
-        <span className="text-white font-semibold">{name}</span>
+        <span className="text-white font-semibold">{key}</span>
         <span className="text-sm font-normal text-gray-300">
-          {numberBought} {maxBuyable ? `/ ${maxBuyable}` : ""}
+          {owned} {max ? `/ ${max}` : ""}
         </span>
       </div>
       <div className="text-sm text-white my-3">
         <ul className="flex gap-4 flex-wrap capitalize">
           {costs.map((cost) => (
-            <div className="bg-gray-800 rounded">
-              <ResourceCostDisplay key={cost.resource} cost={cost} />
+            <div key={cost.resource} className="bg-gray-800 rounded">
+              <ResourceCostDisplay cost={cost} />
             </div>
           ))}
         </ul>
@@ -33,7 +33,7 @@ export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
       <PurchaseButton
         onClick={() => purchase(upgrade)}
         canAfford={canAfford}
-        canBuy={maxBuyable === undefined || numberBought < maxBuyable}
+        canBuy={max === undefined || owned! < max}
       />
     </div>
   );

@@ -24,7 +24,7 @@ export default function FusionPage() {
 
   const handleCombine = () => {
     if (!selectedFusion) return;
-    fusions.do(selectedFusion);
+    fusions.purchase(selectedFusion);
     setSelectedResources([]);
   };
 
@@ -32,7 +32,7 @@ export default function FusionPage() {
     if (selectedResources.length < 2) setSelectedFusion(undefined);
     else {
       const fusion = fusions.state.find((f) => {
-        const inputs = f.recipe.input;
+        const inputs = f.input;
         return (
           inputs.includes(selectedResources[0]) &&
           inputs.includes(selectedResources[1])
@@ -59,7 +59,7 @@ export default function FusionPage() {
           disabled={
             !selectedFusion ||
             !selectedFusion.canAfford ||
-            selectedFusion.discovered
+            selectedFusion.bought
           }
           onClick={handleCombine}
         >

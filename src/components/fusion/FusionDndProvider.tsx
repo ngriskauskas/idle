@@ -14,10 +14,12 @@ import {
 const HTML5toTouch = {
   backends: [
     {
+      id: "html5",
       backend: HTML5Backend,
       transition: undefined,
     },
     {
+      id: "touch",
       backend: TouchBackend,
       options: { enableMouseEvents: true },
       preview: true,

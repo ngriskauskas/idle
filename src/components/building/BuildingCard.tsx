@@ -10,6 +10,7 @@ export const BuildingCard = ({ building }: { building: Building }) => {
       <div className="font-semibold text-lg text-gray-100 capitalize">
         {building.key}
       </div>
+      <div>{building.description}</div>
       <div className="flex text-sm text-gray-300 bg-slate-700 rounded mt-2 max-w-fit">
         <div className="flex flex-col gap-1">
           {building.costs.map((cost) => (

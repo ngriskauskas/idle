@@ -1,8 +1,8 @@
 import type { StateCreator } from "zustand";
-import { canAfford } from "../../utils/helpers";
 import type { GameState } from "../GameState";
-import type { Resources } from "../resource/ResourceState";
 import { InitialUpgrades, type Upgrade, type UpgradeEffect } from "./Upgrades";
+import type { Resources } from "../resources/ResourceState";
+import { buyPurchasable, calcAffordPurchasable } from "../Purchasable";
 
 export type UpgradeState = {
   upgrades: {
@@ -10,21 +10,6 @@ export type UpgradeState = {
     purchase: (upgrade: Upgrade) => void;
     calcAfford: () => void;
   };
-};
-
-const updateUpgrades = (
-  upgrades: Upgrade[],
-  upgradeName: string
-): Upgrade[] => {
-  return upgrades.map((x) => {
-    if (x.name !== upgradeName) return x;
-    const max = x.maxBuyable ?? Infinity;
-    if (x.numberBought >= max) return x;
-    return {
-      ...x,
-      numberBought: x.numberBought + 1,
-    };
-  });
 };
 
 const applyEffects = (
@@ -49,34 +34,18 @@ export const createUpgradeState: StateCreator<
   [],
   [],
   UpgradeState
-> = (set) => ({
+> = (set, get) => ({
   upgrades: {
     state: InitialUpgrades,
     purchase: (upgrade) => {
-      set((s) => {
-        s.resources.spend(upgrade.costs);
-        return {
-          upgrades: {
-            ...s.upgrades,
-            state: updateUpgrades(s.upgrades.state, upgrade.name),
-          },
-          resources: {
-            ...s.resources,
-            state: applyEffects(s.resources.state, upgrade.effects),
-          },
-        };
-      });
-    },
-    calcAfford: () => {
+      buyPurchasable("upgrades", upgrade, get, set);
       set((s) => ({
-        upgrades: {
-          ...s.upgrades,
-          state: s.upgrades.state.map((upgrade) => ({
-            ...upgrade,
-            canAfford: canAfford(s.resources.state, upgrade.costs),
-          })),
+        resources: {
+          ...s.resources,
+          state: applyEffects(s.resources.state, upgrade.effects),
         },
       }));
     },
+    calcAfford: () => calcAffordPurchasable("upgrades", get, set),
   },
 });

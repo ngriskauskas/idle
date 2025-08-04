@@ -1,7 +1,7 @@
 import type { StateCreator } from "zustand";
-import { canAfford } from "../../utils/helpers";
 import type { GameState } from "../GameState";
 import { InitialBuildings, type Building } from "./Buildings";
+import { buyPurchasable, calcAffordPurchasable } from "../Purchasable";
 
 export type BuildingState = {
   buildings: {
@@ -16,32 +16,10 @@ export const createBuildingState: StateCreator<
   [],
   [],
   BuildingState
-> = (set) => ({
+> = (set, get) => ({
   buildings: {
     state: InitialBuildings,
-    purchase: (building) => {
-      set((s) => {
-        s.resources.spend(building.costs);
-        return {
-          buildings: {
-            ...s.buildings,
-            state: s.buildings.state.map((b) =>
-              b.key === building.key ? { ...b, built: true } : b
-            ),
-          },
-        };
-      });
-    },
-    calcAfford: () => {
-      set((s) => ({
-        buildings: {
-          ...s.buildings,
-          state: s.buildings.state.map((b) => ({
-            ...b,
-            canAfford: canAfford(s.resources.state, b.costs),
-          })),
-        },
-      }));
-    },
+    purchase: (building) => buyPurchasable("buildings", building, get, set),
+    calcAfford: () => calcAffordPurchasable("buildings", get, set),
   },
 });

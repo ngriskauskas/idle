@@ -1,8 +1,8 @@
 import type { ResourceCost, ResourceKey } from "../state/resources/Resources";
-import type { ResourceState } from "../state/resources/ResourceState";
+import type { Resources } from "../state/resources/ResourceState";
 
 export const canAfford = (
-  resources: ResourceState,
+  resources: Resources,
   costs: ResourceCost[]
 ): boolean =>
   costs.every(({ resource, amount }) => {
