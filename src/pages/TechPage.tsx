@@ -15,11 +15,11 @@ export default function TechPage() {
 
   return (
     <div className="overflow-x-auto whitespace-nowrap">
-      <div className="flex flex-row gap-8">
+      <div className="flex flex-row gap-2 md:gap-8 ml-1">
         {Object.entries(techColumns).map(([col, techs]) => (
           <div key={col} className="flex flex-col justify-center">
             {techs.map((tech) => (
-              <div key={tech.key} className="mb-4">
+              <div key={tech.key} className="mb-1 md:mb-4">
                 <TechCard tech={tech} />
               </div>
             ))}

@@ -15,6 +15,7 @@ export type ResourceState = {
     state: Resources;
     update: () => void;
     spend: (costs: ResourceCost[]) => void;
+    add: (resource: Resource) => void;
   };
 };
 
@@ -57,5 +58,15 @@ export const createResourceState: StateCreator<
           },
         };
       }),
+    add: (resource) =>
+      set((s) => ({
+        resources: {
+          ...s.resources,
+          state: {
+            ...s.resources.state,
+            [resource.key]: resource,
+          },
+        },
+      })),
   },
 });

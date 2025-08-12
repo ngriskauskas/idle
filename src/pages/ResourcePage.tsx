@@ -8,7 +8,7 @@ export default function ResourcePage() {
   const { resources, upgrades } = useGameState();
   const [collapsed, setCollapsed] = useState<Record<ResourceKey, boolean>>(
     Object.fromEntries(
-      Object.keys(resources).map((key) => [key, true])
+      Object.keys(resources.state).map((key) => [key, true])
     ) as Record<ResourceKey, boolean>
   );
 

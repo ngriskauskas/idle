@@ -10,7 +10,7 @@ export const PurchaseButton = ({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-2 rounded transition font-medium
+      className={`px-1 md:px-3 py-1 md:py-2 rounded transition font-bold md:font-medium
     ${
       canBuy === false
         ? "bg-yellow-400"

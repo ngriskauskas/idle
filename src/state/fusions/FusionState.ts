@@ -19,15 +19,7 @@ export const createFusionState: StateCreator<GameState, [], [], FusionState> = (
     state: InitialFusionRecipes,
     purchase: (fusion) => {
       buyPurchasable("fusions", fusion, get, set);
-      set((s) => ({
-        resources: {
-          ...s.resources,
-          state: {
-            ...s.resources.state,
-            [fusion.output.key]: fusion.output,
-          },
-        },
-      }));
+      get().resources.add(fusion.output);
     },
     calcAfford: () => calcAffordPurchasable("fusions", get, set),
   },

@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, type StateCreator } from "zustand";
 import {
   createBuildingState,
   type BuildingState,
@@ -26,7 +26,56 @@ export type GameState = ResourceState &
   UpgradeState &
   FusionState &
   BuildingState &
-  TechState;
+  TechState &
+  TabState;
+
+interface TabState {
+  tabs: {
+    state: {
+      resources: boolean;
+      fusions: boolean;
+      buildings: boolean;
+      tech: boolean;
+      prestige: boolean;
+    };
+    unlock: (tab: string) => void;
+    reset: () => void;
+  };
+}
+
+const createTabState: StateCreator<GameState, [], [], TabState> = (
+  set,
+  get
+) => ({
+  tabs: {
+    state: {
+      resources: true,
+      buildings: false,
+      fusions: false,
+      tech: false,
+      prestige: false,
+    },
+    unlock: (tab) =>
+      set((s) => ({
+        ...s,
+        state: {
+          ...s.tabs.state,
+          [tab]: true,
+        },
+      })),
+    reset: () =>
+      set((s) => ({
+        ...s,
+        state: {
+          resources: true,
+          buildings: false,
+          fusions: false,
+          tech: false,
+          prestige: false,
+        },
+      })),
+  },
+});
 
 export const useGameState = create<GameState>()((...args) => ({
   ...createResourceState(...args),
@@ -34,4 +83,5 @@ export const useGameState = create<GameState>()((...args) => ({
   ...createFusionState(...args),
   ...createBuildingState(...args),
   ...createTechState(...args),
+  ...createTabState(...args),
 }));

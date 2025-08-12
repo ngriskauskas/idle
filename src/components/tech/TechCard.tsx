@@ -6,10 +6,14 @@ import { ResourceCostDisplay } from "../resource/ResourceCostDisplay";
 export const TechCard = ({ tech }: { tech: Tech }) => {
   const purchase = useGameState((s) => s.tech.purchase);
   return (
-    <div className="bg-gray-700 rounded-xl p-3 w-64 md:w-72 shadow-lg flex flex-col justify-between">
+    <div className="bg-gray-700 rounded-xl p-2 md:p-3 w-64 md:w-72 shadow-lg flex flex-col justify-between">
       <div>
-        <h3 className="text-xl font-bold text-gray-100 mb-1">{tech.key}</h3>
-        <p className="text-gray-300 mb-2 text-wrap">{tech.description}</p>
+        <h3 className="md:text-xl font-bold text-gray-100 md:mb-1">
+          {tech.key}
+        </h3>
+        <p className="text-sm text-gray-300 md:mb-2 text-wrap">
+          {tech.description}
+        </p>
 
         <div className="flex text-sm text-gray-300 bg-slate-600 rounded mt-1 max-w-fit mb-2">
           <div className="flex flex-col gap-1">

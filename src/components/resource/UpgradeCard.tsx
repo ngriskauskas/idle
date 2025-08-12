@@ -17,7 +17,7 @@ export function UpgradeCard({ upgrade }: { upgrade: Upgrade }) {
         </span>
       </div>
       <div className="text-sm text-white my-3">
-        <ul className="flex gap-4 flex-wrap capitalize">
+        <ul className="flex gap-1 md:gap-4 flex-wrap capitalize">
           {costs.map((cost) => (
             <div key={cost.resource} className="bg-gray-800 rounded">
               <ResourceCostDisplay cost={cost} />

@@ -9,7 +9,6 @@ export interface Fusion extends Purchasable {
 export const InitialFusionRecipes: Fusion[] = [
   {
     key: "steam",
-
     input: ["fire", "water"],
     output: {
       key: "steam",
@@ -21,7 +20,7 @@ export const InitialFusionRecipes: Fusion[] = [
     canAfford: false,
     bought: false,
     costs: [
-      { resource: "fire", amount: 100 },
+      { resource: "fire", amount: 10 },
       { resource: "water", amount: 10 },
     ],
   },

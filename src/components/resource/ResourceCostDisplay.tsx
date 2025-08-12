@@ -10,7 +10,7 @@ export const ResourceCostDisplay = ({ cost }: { cost: ResourceCost }) => {
       key={cost.resource}
       className="inline-flex items-center px-2 py-1 rounded"
     >
-      <span className="mr-1 text-lg">
+      <span className="mr-1 md:text-lg">
         {ResourceIcons[cost.resource as ResourceKey]}
       </span>
       <span>

@@ -13,8 +13,9 @@ export interface Resource {
   key: ResourceKey;
   amount: number;
   max: number;
-  color: string;
   rate: number;
+  color: string;
+  textColor: string;
 }
 
 export const ResourceIcons: Record<ResourceKey, string> = {
@@ -31,12 +32,13 @@ export const ResourceIcons: Record<ResourceKey, string> = {
 
 export type ResourceCost = { resource: ResourceKey; amount: number };
 
-export const InitialResources: Partial<Record<ResourceKey, Resource>> = {
+export const StartingResourceOptions: Partial<Record<ResourceKey, Resource>> = {
   fire: {
     key: "fire",
     amount: 0,
     max: 100,
     color: "#e25822",
+    textColor: "white",
     rate: 1,
   },
   water: {
@@ -44,6 +46,7 @@ export const InitialResources: Partial<Record<ResourceKey, Resource>> = {
     amount: 0,
     max: 100,
     color: "#1e90ff",
+    textColor: "white",
     rate: 1,
   },
   air: {
@@ -51,6 +54,7 @@ export const InitialResources: Partial<Record<ResourceKey, Resource>> = {
     amount: 0,
     max: 100,
     color: "#c0fefe",
+    textColor: "black",
     rate: 1,
   },
   earth: {
@@ -58,6 +62,9 @@ export const InitialResources: Partial<Record<ResourceKey, Resource>> = {
     amount: 0,
     max: 100,
     color: "#654321",
+    textColor: "white",
     rate: 1,
   },
 };
+
+export const InitialResources: Partial<Record<ResourceKey, Resource>> = {};
