@@ -11,10 +11,12 @@ export type FusionState = {
   };
 };
 
-export const createFusionState: StateCreator<GameState, [], [], FusionState> = (
-  set,
-  get
-) => ({
+export const createFusionState: StateCreator<
+  GameState,
+  [["zustand/immer", never]],
+  [],
+  FusionState
+> = (set, get) => ({
   fusions: {
     state: InitialFusionRecipes,
     purchase: (fusion) => {

@@ -23,17 +23,13 @@ export const calcAffordPurchasable = <K extends PurchaseableKeys>(
   get: () => GameState,
   set: GameStateSet
 ) => {
-  const slice = get()[key] as { state: Purchasable[] };
   const resources = get().resources.state;
-  set((s) => ({
-    [key]: {
-      ...(s[key] as { state: Purchasable[] }),
-      state: slice.state.map((item) => ({
-        ...item,
-        canAfford: canAfford(resources, item.costs),
-      })),
-    },
-  }));
+  set((state) => {
+    const slice = state[key] as { state: Purchasable[] };
+    slice.state.forEach((item, i) => {
+      item.canAfford = canAfford(resources, item.costs);
+    });
+  });
 };
 
 export const buyPurchasable = <K extends PurchaseableKeys>(
@@ -43,25 +39,17 @@ export const buyPurchasable = <K extends PurchaseableKeys>(
   set: GameStateSet
 ) => {
   get().resources.spend(item.costs);
-  const slice = get()[key] as { state: Purchasable[] };
-  set((s) => ({
-    [key]: {
-      ...(s[key] as { state: Purchasable[] }),
-      state: slice.state.map((x) =>
-        x.key !== item.key
-          ? x
-          : {
-              ...x,
-              bought: true,
-              owned:
-                x.owned === undefined
-                  ? undefined
-                  : x.max
-                  ? Math.min(x.owned + 1, x.max!)
-                  : x.owned + 1,
-            }
-      ),
-    },
-  }));
+  set((state) => {
+    const sliceState = state[key] as { state: Purchasable[] };
+    sliceState.state.forEach((x) => {
+      if (x.key === item.key) {
+        x.bought = true;
+        if (x.owned !== undefined) {
+          x.owned =
+            x.max !== undefined ? Math.min(x.owned + 1, x.max) : x.owned + 1;
+        }
+      }
+    });
+  });
   item.effect?.(set);
 };

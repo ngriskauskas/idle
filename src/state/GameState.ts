@@ -10,17 +10,10 @@ import {
 } from "./resources/ResourceState";
 import { createUpgradeState, type UpgradeState } from "./upgrades/UpgradeState";
 import { createTechState, type TechState } from "./tech/TechState";
+import { immer } from "zustand/middleware/immer";
+import type { Draft } from "immer";
 
-export type GameStateSet = {
-  (
-    partial:
-      | GameState
-      | Partial<GameState>
-      | ((state: GameState) => GameState | Partial<GameState>),
-    replace?: false
-  ): void;
-  (partial: GameState | ((state: GameState) => GameState), replace: true): void;
-};
+export type GameStateSet = (fn: (draft: Draft<GameState>) => void) => void;
 
 export type GameState = ResourceState &
   UpgradeState &
@@ -77,11 +70,13 @@ const createTabState: StateCreator<GameState, [], [], TabState> = (
   },
 });
 
-export const useGameState = create<GameState>()((...args) => ({
-  ...createResourceState(...args),
-  ...createUpgradeState(...args),
-  ...createFusionState(...args),
-  ...createBuildingState(...args),
-  ...createTechState(...args),
-  ...createTabState(...args),
-}));
+export const useGameState = create<GameState>()(
+  immer((...args) => ({
+    ...createResourceState(...args),
+    ...createUpgradeState(...args),
+    ...createFusionState(...args),
+    ...createBuildingState(...args),
+    ...createTechState(...args),
+    ...createTabState(...args),
+  }))
+);

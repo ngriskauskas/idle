@@ -13,7 +13,7 @@ export type BuildingState = {
 
 export const createBuildingState: StateCreator<
   GameState,
-  [],
+  [["zustand/immer", never]],
   [],
   BuildingState
 > = (set, get) => ({

@@ -11,10 +11,12 @@ export type TechState = {
   };
 };
 
-export const createTechState: StateCreator<GameState, [], [], TechState> = (
-  set,
-  get
-) => ({
+export const createTechState: StateCreator<
+  GameState,
+  [["zustand/immer", never]],
+  [],
+  TechState
+> = (set, get) => ({
   tech: {
     state: InitialTechs,
     calcAfford: () => calcAffordPurchasable("tech", get, set),

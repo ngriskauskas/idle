@@ -21,52 +21,33 @@ export type ResourceState = {
 
 export const createResourceState: StateCreator<
   GameState,
-  [],
+  [["zustand/immer", never]],
   [],
   ResourceState
-> = (set) => ({
+> = (set, get) => ({
   resources: {
     state: InitialResources,
-    update: () =>
-      set((state) => ({
-        resources: {
-          ...state.resources,
-          state: Object.fromEntries(
-            Object.entries(state.resources.state).map(([key, resc]) => [
-              key,
-              {
-                ...resc,
-                amount: Math.min(resc.amount + resc.rate, resc.max),
-              },
-            ])
-          ) as Resources,
-        },
-      })),
+    update: () => {
+      for (const [_, resc] of Object.entries(get().resources.state)) {
+        const updater = resc.update;
+        if (updater) updater(get, set);
+      }
+
+      set((state) => {
+        for (const [_, resc] of Object.entries(state.resources.state))
+          resc.amount = Math.min(resc.amount + resc.rate, resc.max);
+      });
+    },
     spend: (costs) =>
-      set((s) => {
-        if (!canAfford(s.resources.state, costs)) return s;
-
-        const updatedResources = { ...s.resources.state };
-        costs.forEach(({ resource, amount }) => {
-          updatedResources[resource]!.amount -= amount;
-        });
-
-        return {
-          resources: {
-            ...s.resources,
-            state: updatedResources,
-          },
-        };
+      set((state) => {
+        if (!canAfford(state.resources.state, costs)) return;
+        for (const { resource, amount } of costs) {
+          state.resources.state[resource]!.amount -= amount;
+        }
       }),
     add: (resource) =>
-      set((s) => ({
-        resources: {
-          ...s.resources,
-          state: {
-            ...s.resources.state,
-            [resource.key]: resource,
-          },
-        },
-      })),
+      set((state) => {
+        state.resources.state[resource.key] = resource;
+      }),
   },
 });

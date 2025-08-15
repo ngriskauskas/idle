@@ -1,3 +1,5 @@
+import type { GameState, GameStateSet } from "../GameState";
+
 export type ResourceKey =
   | "fire"
   | "water"
@@ -14,8 +16,10 @@ export interface Resource {
   amount: number;
   max: number;
   rate: number;
+  baseRate: number;
   color: string;
   textColor: string;
+  update?: (get: () => GameState, set: GameStateSet) => void;
 }
 
 export const ResourceIcons: Record<ResourceKey, string> = {
@@ -40,6 +44,12 @@ export const StartingResourceOptions: Partial<Record<ResourceKey, Resource>> = {
     color: "#e25822",
     textColor: "white",
     rate: 1,
+    baseRate: 1,
+    update: (get, set) => {
+      const fire = get().resources.state.fire!;
+      const ratio = fire.amount / fire.max;
+      //TODO
+    },
   },
   water: {
     key: "water",
@@ -48,6 +58,7 @@ export const StartingResourceOptions: Partial<Record<ResourceKey, Resource>> = {
     color: "#1e90ff",
     textColor: "white",
     rate: 1,
+    baseRate: 1,
   },
   air: {
     key: "air",
@@ -56,6 +67,7 @@ export const StartingResourceOptions: Partial<Record<ResourceKey, Resource>> = {
     color: "#c0fefe",
     textColor: "black",
     rate: 1,
+    baseRate: 1,
   },
   earth: {
     key: "earth",
@@ -64,6 +76,7 @@ export const StartingResourceOptions: Partial<Record<ResourceKey, Resource>> = {
     color: "#654321",
     textColor: "white",
     rate: 1,
+    baseRate: 1,
   },
 };
 
